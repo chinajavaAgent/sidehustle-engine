@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信分析功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .card { border: 1px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #0056b3; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .result { background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .topic-item { border: 1px solid #eee; padding: 15px; margin: 10px 0; border-radius: 6px; }
+        .keyword { background: #e3f2fd; padding: 2px 6px; border-radius: 3px; margin: 2px; display: inline-block; }
+        .loading { color: #666; font-style: italic; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; }
+        .success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; }
+        textarea { width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 微信公众号智能分析功能测试</h1>
+    
+    <div class="card">
+        <h2>📱 微信文章分析</h2>
+        <div>
+            <label><strong>文章链接:</strong></label>
+            <textarea id="urlInput" placeholder="请输入微信公众号文章链接，支持多个（每行一个）">https://mp.weixin.qq.com/s/LZgG-5uE8fGaJAiqb0FGYQ</textarea>
+        </div>
+        <div style="margin: 15px 0;">
+            <label><strong>生成选题数量:</strong></label>
+            <select id="limitSelect">
+                <option value="5">5个</option>
+                <option value="10" selected>10个</option>
+                <option value="15">15个</option>
+            </select>
+        </div>
+        <div>
+            <button class="btn" onclick="testWeChatAnalysis()" id="analyzeBtn">🔍 开始分析</button>
+            <button class="btn" onclick="testDemo()" id="demoBtn">🎬 演示功能</button>
+            <button class="btn" onclick="clearResults()">🗑️ 清空结果</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📊 测试结果</h2>
+        <div id="results"></div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 生成的选题</h2>
+        <div id="topics"></div>
+    </div>
+
+    <script>
+        let currentTest = '';
+
+        function showLoading(message) {
+            document.getElementById('results').innerHTML = `<div class="loading">⏳ ${message}</div>`;
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('demoBtn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('analyzeBtn').disabled = false;
+            document.getElementById('demoBtn').disabled = false;
+        }
+
+        function showError(message) {
+            document.getElementById('results').innerHTML = `<div class="error">❌ ${message}</div>`;
+            hideLoading();
+        }
+
+        function showSuccess(message) {
+            const results = document.getElementById('results');
+            results.innerHTML += `<div class="success">✅ ${message}</div>`;
+            hideLoading();
+        }
+
+        async function testWeChatAnalysis() {
+            const urls = document.getElementById('urlInput').value
+                .split('\\n')
+                .map(url => url.trim())
+                .filter(url => url && url.includes('mp.weixin.qq.com'));
+
+            if (urls.length === 0) {
+                showError('请输入有效的微信公众号文章链接');
+                return;
+            }
+
+            const limit = parseInt(document.getElementById('limitSelect').value);
+            
+            showLoading(\`正在分析 \${urls.length} 篇文章...\`);
+            currentTest = 'wechat';
+
+            try {
+                // 模拟API调用 - 实际应该调用 /api/topics/trending/wechat
+                const mockResult = await simulateWeChatAnalysis(urls, limit);
+                
+                showSuccess(\`成功分析 \${urls.length} 篇文章，生成 \${mockResult.length} 个选题\`);
+                displayTopics(mockResult);
+                
+            } catch (error) {
+                showError(\`分析失败: \${error.message}\`);
+            }
+        }
+
+        async function testDemo() {
+            showLoading('正在加载演示数据...');
+            currentTest = 'demo';
+
+            try {
+                // 模拟演示数据
+                const demoResult = await simulateDemoData();
+                
+                showSuccess('演示数据加载成功');
+                displayTopics(demoResult);
+                
+            } catch (error) {
+                showError(\`演示加载失败: \${error.message}\`);
+            }
+        }
+
+        async function simulateWeChatAnalysis(urls, limit) {
+            // 模拟网络延迟
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // 模拟分析结果（基于实际测试数据）
+            return [
+                {
+                    id: 1,
+                    title: "内容创作新趋势：抄书变现指南",
+                    reason: "基于'一天两小时，收入500+，这3个正规赚钱平台，真的太香了！'分析生成，时效性指标得分25、收益性指标得分30、实用性指标得分15，综合热度90分",
+                    category: "内容创作",
+                    heat: 90,
+                    keywords: ["抄书", "剪辑", "平台", "收入", "副业"],
+                    source_url: urls[0]
+                },
+                {
+                    id: 2,
+                    title: "2024年抄书副业机会深度解析",
+                    reason: "通过分析热门公众号文章，提取副业机会和趋势",
+                    category: "内容创作", 
+                    heat: 88,
+                    keywords: ["2024", "抄书", "副业", "机会", "分析"],
+                    source_url: urls[0]
+                },
+                {
+                    id: 3,
+                    title: "从零开始做内容创作：抄书实战经验",
+                    reason: "实用性指标得分高，适合新手入门的副业方向",
+                    category: "内容创作",
+                    heat: 85,
+                    keywords: ["零基础", "内容创作", "实战", "经验"],
+                    source_url: urls[0]
+                }
+            ].slice(0, limit);
+        }
+
+        async function simulateDemoData() {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            return [
+                {
+                    id: 1,
+                    title: "AI绘画接单实战：月入过万的完整流程",
+                    reason: "AI技术发展迅速，市场需求大",
+                    category: "AI工具",
+                    heat: 92,
+                    keywords: ["AI绘画", "Midjourney", "接单", "变现"],
+                    source_url: "演示数据"
+                },
+                {
+                    id: 2,
+                    title: "小红书种草文案写作：单篇收费200+",
+                    reason: "品牌营销需求持续增长，种草文案市场火热",
+                    category: "内容创作",
+                    heat: 88,
+                    keywords: ["小红书", "种草", "文案", "营销"],
+                    source_url: "演示数据"
+                }
+            ];
+        }
+
+        function displayTopics(topics) {
+            const container = document.getElementById('topics');
+            
+            if (topics.length === 0) {
+                container.innerHTML = '<div class="result">暂无生成的选题</div>';
+                return;
+            }
+
+            let html = '';
+            topics.forEach((topic, index) => {
+                html += \`
+                    <div class="topic-item">
+                        <h3>\${index + 1}. \${topic.title}</h3>
+                        <div style="margin: 10px 0;">
+                            <strong>推荐理由：</strong>\${topic.reason}
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 4px; font-size: 12px;">\${topic.category}</span>
+                            <span style="margin-left: 10px; color: #666;">热度: \${topic.heat}分</span>
+                        </div>
+                        <div>
+                            <strong>关键词：</strong>
+                            \${topic.keywords.map(kw => \`<span class="keyword">\${kw}</span>\`).join('')}
+                        </div>
+                        \${topic.source_url && topic.source_url !== '演示数据' ? \`
+                            <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                                来源: \${topic.source_url.substring(0, 50)}...
+                            </div>
+                        \` : ''}
+                    </div>
+                \`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('topics').innerHTML = '';
+        }
+
+        // 页面加载完成后自动显示说明
+        window.onload = function() {
+            document.getElementById('results').innerHTML = \`
+                <div class="result">
+                    <h3>🚀 功能说明</h3>
+                    <p><strong>微信分析：</strong>基于您提供的微信公众号文章链接，智能提取关键词并生成相关选题</p>
+                    <p><strong>演示功能：</strong>展示系统的分析能力和选题生成效果</p>
+                    <p><strong>实测文章：</strong>"一天两小时，收入500+，这3个正规赚钱平台，真的太香了！"</p>
+                    <p><strong>技术特色：</strong>中文分词 + 关键词提取 + 主题分类 + 热度评分</p>
+                </div>
+            \`;
+        }
+    </script>
+</body>
+</html>
