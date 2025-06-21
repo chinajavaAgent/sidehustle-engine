@@ -1,0 +1,18 @@
+{
+  "name": "sidehustle-engine",
+  "version": "1.0.0",
+  "description": "副业有道内容引擎 - 自动化内容生产系统",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python main.py",
+    "install:all": "npm install --prefix frontend && cd backend && pip install -r requirements.txt",
+    "start": "./start.sh"
+  },
+  "keywords": ["副业", "内容生成", "AI", "自动化"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>副业有道内容引擎 - 功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { border: 1px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .topic-item { border: 1px solid #eee; padding: 15px; margin: 10px 0; border-radius: 6px; cursor: pointer; }
+        .topic-item:hover { background: #f8f9fa; }
+        .selected { background: #e3f2fd; border-color: #2196f3; }
+        textarea { width: 100%; min-height: 300px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 副业有道内容引擎 - 功能测试</h1>
+    
+    <div class="card">
+        <h2>📋 选题推荐</h2>
+        <button class="btn" onclick="loadTopics()">刷新选题</button>
+        <div id="topics-container"></div>
+    </div>
+    
+    <div class="card">
+        <h2>📝 内容生成</h2>
+        <div>
+            <label>选择文章框架：</label>
+            <select id="framework-select">
+                <option value="problem-solution">痛点+解决方案型</option>
+                <option value="story-tips">故事+干货型</option>
+                <option value="tutorial-steps">教程+步骤型</option>
+                <option value="comparison-review">盘点+评测型</option>
+            </select>
+        </div>
+        <br>
+        <button class="btn" onclick="generateContent()">生成文章</button>
+        <div id="content-result"></div>
+    </div>
+
+    <script>
+        let selectedTopic = null;
+        
+        // 模拟选题数据
+        const mockTopics = [
+            {
+                id: 1,
+                title: 'AI绘画接单，月入过万的新兴副业',
+                reason: '近期AI绘画工具火爆，市场需求大',
+                category: 'AI工具',
+                heat: 85
+            },
+            {
+                id: 2,
+                title: '闲鱼卖货实战指南：从0到月收入5000+',
+                reason: '电商副业门槛低，适合新手入门',
+                category: '电商变现',
+                heat: 78
+            },
+            {
+                id: 3,
+                title: '短视频剪辑接私活，学生党也能月入3000',
+                reason: '短视频内容需求旺盛，技能门槛适中',
+                category: '内容创作',
+                heat: 72
+            }
+        ];
+
+        function loadTopics() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = '<p>加载中...</p>';
+            
+            // 模拟加载延迟
+            setTimeout(() => {
+                container.innerHTML = '';
+                mockTopics.forEach(topic => {
+                    const topicDiv = document.createElement('div');
+                    topicDiv.className = 'topic-item';
+                    topicDiv.onclick = () => selectTopic(topic, topicDiv);
+                    topicDiv.innerHTML = `
+                        <h3>${topic.title}</h3>
+                        <p><strong>推荐理由：</strong>${topic.reason}</p>
+                        <div>
+                            <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${topic.category}</span>
+                            <span style="margin-left: 10px; color: #666;">热度: ${topic.heat}</span>
+                        </div>
+                    `;
+                    container.appendChild(topicDiv);
+                });
+            }, 1000);
+        }
+
+        function selectTopic(topic, element) {
+            // 清除之前的选择
+            document.querySelectorAll('.topic-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 选择当前项
+            element.classList.add('selected');
+            selectedTopic = topic;
+            console.log('选择了选题:', topic);
+        }
+
+        function generateContent() {
+            if (!selectedTopic) {
+                alert('请先选择一个选题！');
+                return;
+            }
+
+            const framework = document.getElementById('framework-select').value;
+            const resultDiv = document.getElementById('content-result');
+            
+            resultDiv.innerHTML = '<p>正在生成内容，请稍候...</p>';
+
+            // 模拟内容生成
+            setTimeout(() => {
+                const content = generateMockContent(selectedTopic, framework);
+                resultDiv.innerHTML = `
+                    <h3>生成的文章内容：</h3>
+                    <div>
+                        <label><strong>标题：</strong></label>
+                        <input type="text" value="${content.title}" style="width: 100%; margin: 10px 0; padding: 8px;">
+                    </div>
+                    <div>
+                        <label><strong>内容：</strong></label>
+                        <textarea>${content.content}</textarea>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn" onclick="optimizeTitle()">优化标题</button>
+                        <button class="btn" onclick="polishContent()">润色内容</button>
+                        <button class="btn" onclick="formatContent()">格式化排版</button>
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        function generateMockContent(topic, framework) {
+            const titles = {
+                'problem-solution': `解决副业难题：${topic.title}的完整攻略`,
+                'story-tips': `真实案例：我是如何通过${topic.title.split('，')[0]}实现财务自由的`,
+                'tutorial-steps': `${topic.title}完全教程：从零基础到月入5000+`,
+                'comparison-review': `2024年${topic.category}副业大盘点：哪个最赚钱？`
+            };
+
+            const contents = {
+                'problem-solution': `## 前言
+
+在当今经济环境下，越来越多人开始关注副业赚钱。${topic.reason}，这为我们提供了新的机会。
+
+## 痛点分析
+
+很多人想要开始副业，但面临以下问题：
+- 不知道从何开始
+- 缺乏专业技能
+- 担心投入产出比
+- 时间管理困难
+
+## ${topic.title}的优势
+
+${topic.reason}，具体优势包括：
+- 门槛相对较低
+- 市场需求旺盛
+- 时间安排灵活
+- 收益潜力可观
+
+## 具体操作步骤
+
+### 第一步：技能准备
+- 学习相关基础知识
+- 掌握必要工具使用
+- 了解行业标准和规范
+
+### 第二步：市场调研
+- 分析目标客户群体
+- 研究竞争对手定价
+- 确定自己的服务定位
+
+## 收益预期
+
+根据市场调研，${topic.category}领域的收益情况：
+- 新手期：月收入500-2000元
+- 成长期：月收入2000-8000元
+- 成熟期：月收入8000-20000元
+
+## 总结
+
+${topic.title}确实是一个值得尝试的副业方向。成功的关键在于持续学习、专业服务和用心经营。`,
+
+                'story-tips': `## 我的副业故事
+
+大家好，我是小张。今天想和大家分享我通过${topic.title.split('，')[0]}实现月入过万的真实经历。
+
+## 初期探索
+
+两年前，我还是一个普通的上班族，每月工资勉强够用。${topic.reason}，让我看到了机会。
+
+## 关键转折点
+
+真正的转折发生在第六个月。我接到一个大客户的长期合作项目，月收入一下子突破了8000元。
+
+### 干货分享
+
+1. **专业技能是根本**
+2. **服务意识很重要**  
+3. **营销推广不可少**
+4. **时间管理要到位**
+
+## 现在的状态
+
+经过两年的努力，我现在月收入稳定在1.5万以上，拥有20多个长期合作客户。
+
+## 给新手的建议
+
+如果你也想开始${topic.category}副业，我建议：
+1. 从小做起，不要贪大
+2. 专注提升专业能力
+3. 建立良好的工作习惯
+4. 保持耐心和坚持`,
+
+                'tutorial-steps': `## 教程说明
+
+本教程将手把手教你如何从零开始${topic.title.split('，')[0]}。${topic.reason}，现在正是入场的好时机。
+
+## 准备阶段
+
+### 硬件要求
+- 电脑配置：中等配置即可
+- 网络环境：稳定的宽带连接
+
+### 技能基础
+- 基础知识掌握程度：60%
+- 学习时间投入：每天2小时
+- 预期学习周期：1-2个月
+
+## 详细操作步骤
+
+### 第一步：基础学习（第1-2周）
+1. 观看入门教程视频
+2. 跟着教程做练习
+3. 加入相关学习群组
+
+### 第二步：实操练习（第3-4周）
+1. 严格按照标准流程操作
+2. 注重细节和质量
+3. 记录遇到的问题
+
+### 第三步：作品集建设（第5-6周）
+- 数量：不少于5个完整作品
+- 质量：展示不同技能点
+
+### 第四步：客户获取（第7-8周）
+- 线上平台
+- 线下渠道
+- 接单技巧
+
+## 总结
+
+${topic.title}确实是一个不错的副业选择。关键在于系统性学习和持续性练习。`,
+
+                'comparison-review': `## 前言
+
+2024年${topic.category}领域出现了很多新机会。${topic.reason}，今天就来系统盘点一下这个领域的热门副业项目。
+
+## 评测标准
+
+收益潜力、入门门槛、市场前景、风险控制
+
+## 热门项目深度评测
+
+### 项目一：${topic.title.split('，')[0]}
+
+**收益潜力：⭐⭐⭐⭐⭐**
+- 新手月收入：1000-3000元
+- 熟手月收入：5000-15000元
+
+**优势：**
+- ${topic.reason}
+- 市场需求量大
+- 技能可持续积累
+
+**劣势：**
+- 需要一定学习成本
+- 竞争逐渐激烈
+
+## 综合对比分析
+
+| 项目类型 | 收益潜力 | 入门门槛 | 市场前景 | 推荐指数 |
+|---------|---------|---------|---------|---------|
+| ${topic.category} | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐☆ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+
+## 选择建议
+
+${topic.category}领域机会很多，关键是找到适合自己的方向。`
+            };
+
+            return {
+                title: titles[framework] || titles['problem-solution'],
+                content: contents[framework] || contents['problem-solution']
+            };
+        }
+
+        function optimizeTitle() {
+            alert('标题优化功能：\n\n建议标题：\n1. 干货！' + selectedTopic.title + '\n2. 2024年最新：' + selectedTopic.title + '\n3. 月入过万！' + selectedTopic.title + '的秘密');
+        }
+
+        function polishContent() {
+            alert('内容润色功能正在运行...\n\n润色后的内容将更加流畅和专业！');
+        }
+
+        function formatContent() {
+            alert('格式化排版功能正在运行...\n\n内容将按照公众号标准进行美化排版！');
+        }
+
+        // 页面加载时自动加载选题
+        window.onload = function() {
+            loadTopics();
+        }
+    </script>
+</body>
+</html>
