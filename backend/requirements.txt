@@ -7,3 +7,33 @@ lxml
 selenium
 aiohttp
 jieba
+
+# 多平台内容分析新增依赖
+aiofiles
+asyncio
+numpy
+textblob
+networkx
+python-dotenv
+
+# 视频内容处理 (可选)
+yt-dlp
+openai-whisper
+
+# 数据处理和分析
+pandas
+scikit-learn
+
+# 缓存和存储
+redis
+sqlalchemy
+
+# RPA和网页自动化
+selenium
+playwright
+chromedriver-autoinstaller
+webdriver-manager
+
+# 额外的分析工具
+fake-useragent
+requests-html
