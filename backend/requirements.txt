@@ -2,3 +2,8 @@ fastapi
 uvicorn
 pydantic
 requests
+beautifulsoup4
+lxml
+selenium
+aiohttp
+jieba
